@@ -59,7 +59,15 @@
                 usersElement.appendChild(element)
             })
         })
-        .joining()
-        .leaving()
+        .joining((user)=>{
+            let element= document.createElement('li')
+            element.setAttribute('id',user.id)
+            element.innerText = user.name;
+            usersElement.appendChild(element)
+        })
+        .leaving((user)=>{
+            const element = document.getElementById(user.id)
+            element.parentNode.removeChild(element)
+        })
 </script>
 @endpush
