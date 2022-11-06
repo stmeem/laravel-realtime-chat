@@ -37,8 +37,6 @@
                             <div class="col-2">
                                 <p><strong>Online now</strong></p>
                                 <ul id="users" class="list-unstyled overflow-auto text-info" style="height: 45vh">
-                                    <li>Test1</li>
-                                    <li>Test2</li>
                                 </ul>
                             </div>
                         </div>
@@ -54,10 +52,10 @@
     const usersElement=document.getElementById('users')
     Echo.join('chat')
         .here((users)=>{
-            users.forEach((user,index)=>{
+            users.forEach((user,index) => {
                 let element= document.createElement('li')
-                element.setAttribute('id',e.user.id)
-                element.innerText = e.user.name;
+                element.setAttribute('id',user.id)
+                element.innerText = user.name;
                 usersElement.appendChild(element)
             })
         })
