@@ -42,7 +42,6 @@
                                 </ul>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -51,5 +50,18 @@
 @endsection
 
 @push('scripts')
-
+<script>
+    const usersElement=document.getElementById('users')
+    Echo.join('chat')
+        .here((users)=>{
+            users.forEach((user,index)=>{
+                let element= document.createElement('li')
+                element.setAttribute('id',e.user.id)
+                element.innerText = e.user.name;
+                usersElement.appendChild(element)
+            })
+        })
+        .joining()
+        .leaving()
+</script>
 @endpush
