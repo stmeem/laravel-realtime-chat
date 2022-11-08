@@ -18,21 +18,20 @@
                                 <div class="row">
                                     <div class="col-12 border rounded-lg p-3">
                                         <ul id="messages" class="list-unstyled overflow-auto" style="height: 45vh">
-                                            <li>Test1:Hello</li>
-                                            <li>Test2:Hi!</li>
                                         </ul>
                                     </div>
                                 </div>
-                                    <form>
-                                        <div class="row py-3">
-                                            <div class="col-10">
-                                                <input id="message" class="form-control" type="text">
-                                            </div>
-                                            <div class="col-2">
-                                                <button id="send" type="submit" class="btn btn-info text-white">Send</button>
-                                            </div>
+                                <form>
+                                    <div class="row py-3">
+                                        <div class="col-10">
+                                            <input id="message" class="form-control" type="text">
                                         </div>
-                                    </form>
+                                        <div class="col-2">
+                                            <button id="send" type="submit" class="btn btn-info text-white">Send
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
                             <div class="col-2">
                                 <p><strong>Online now</strong></p>
@@ -48,39 +47,52 @@
 @endsection
 
 @push('scripts')
-<script>
-    const usersElement=document.getElementById('users')
-    Echo.join('chat')
-        .here((users)=>{
-            users.forEach((user,index) => {
+    <script>
+
+        const usersElement = document.getElementById("users");
+        let messages = document.getElementById("messages");
+
+        Echo.join('chat')
+            .here((users)=>{
+                users.forEach((user,index) => {
+                    let element= document.createElement('li')
+                    element.setAttribute('id',user.id)
+                    element.innerText = user.name;
+                    usersElement.appendChild(element)
+                })
+            })
+            .joining((user)=>{
                 let element= document.createElement('li')
                 element.setAttribute('id',user.id)
                 element.innerText = user.name;
                 usersElement.appendChild(element)
             })
-        })
-        .joining((user)=>{
-            let element= document.createElement('li')
-            element.setAttribute('id',user.id)
-            element.innerText = user.name;
-            usersElement.appendChild(element)
-        })
-        .leaving((user)=>{
-            const element = document.getElementById(user.id)
-            element.parentNode.removeChild(element)
-        })
-</script>
+            .leaving((user)=>{
+                const element = document.getElementById(user.id)
+                element.parentNode.removeChild(element)
+            })
+            .listen('MessageSent', el => {
+            console.log(el);
+            let element = document.createElement('li');
+            element.innerText = el.user.name + " : " + el.message;
+            messages.appendChild(element);
+        });
+    </script>
 
-<script>
-     const messageElement = document.getElementById('message');
-     const sendElement = document.getElementById('send');
+    <script>
+        const sendElement = document.getElementById('send');
+        const messageElement = document.getElementById("message");
 
-     sendElement.addEventListener('click',(e) => {
-         e.preventDefault();
-         window.axios.post('/chat/message',{
-             message: messageElement.value,
-         })
-         messageElement.value = '';
-     })
-</script>
+        sendElement.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            window.axios.post('/chat/message', {
+                message: messageElement.value,
+            }).then(el => {
+                console.log(el);
+            });
+            messageElement.value = '';
+        })
+    </script>
+
 @endpush

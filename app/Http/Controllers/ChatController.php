@@ -27,11 +27,14 @@ class ChatController extends Controller
         return view('chat.chatroom');
     }
     public function messageReceived(Request $request){
+
         $rules = [
             'message' => 'required'
         ];
         $request->validate($rules);
-        broadcast(new MessageSent($request->user(),$request->message));
+
+        broadcast(new MessageSent($request->user(), $request->message));
         return response()->json('Message broadcast');
     }
+
 }
