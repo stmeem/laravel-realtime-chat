@@ -1,7 +1,9 @@
 @extends('layouts.app')
 @push('styles')
     <style>
-
+        #users > li{
+            cursor:pointer;
+        }
     </style>
 @endpush
 
@@ -57,6 +59,7 @@
                 users.forEach((user,index) => {
                     let element= document.createElement('li')
                     element.setAttribute('id',user.id)
+                    element.setAttribute('onclick','greetUser("'+user.id+'")')
                     element.innerText = user.name;
                     usersElement.appendChild(element)
                 })
@@ -64,6 +67,7 @@
             .joining((user)=>{
                 let element= document.createElement('li')
                 element.setAttribute('id',user.id)
+                element.setAttribute('onclick','greetUser("'+user.id+'")')
                 element.innerText = user.name;
                 usersElement.appendChild(element)
             })
@@ -72,10 +76,10 @@
                 element.parentNode.removeChild(element)
             })
             .listen('MessageSent', el => {
-            console.log(el);
-            let element = document.createElement('li');
-            element.innerText = el.user.name + " : " + el.message;
-            messages.appendChild(element);
+                console.log(el);
+                let element = document.createElement('li');
+                element.innerText = el.user.name + " : " + el.message;
+                messages.appendChild(element);
         });
     </script>
 
@@ -95,4 +99,20 @@
         })
     </script>
 
+    <script>
+        function greetUser(id){
+            window.axios.post('/chat/greet/'+id);
+        }
+    </script>
+
+    <script>
+        Echo.private('chat.greet.{{auth()->user()->id}}')
+            .listen('GreetingSent',(e) => {
+                console.log(e);
+                let element = document.createElement('li');
+                element.innerText = e.message;
+                element.classList.add('text-success');
+                messages.appendChild(element);
+            })
+    </script>
 @endpush
